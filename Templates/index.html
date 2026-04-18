@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Email Detection</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #0f1624;
+            color: #e0e6f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+        }
+        .container {
+            background: #1a2540;
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 700px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+            border: 1px solid #2a3a5c;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .header h1 {
+            font-size: 26px;
+            color: #4a9eff;
+            margin-bottom: 6px;
+        }
+        .header p {
+            font-size: 13px;
+            color: #8899bb;
+        }
+        label {
+            display: block;
+            font-size: 14px;
+            color: #8899bb;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            background: #111d35;
+            border: 1px solid #2a3a5c;
+            border-radius: 10px;
+            color: #e0e6f0;
+            font-size: 14px;
+            padding: 14px;
+            resize: vertical;
+            outline: none;
+            transition: border 0.2s;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        textarea:focus { border-color: #4a9eff; }
+        button {
+            width: 100%;
+            margin-top: 16px;
+            padding: 14px;
+            background: #4a9eff;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: background 0.2s;
+        }
+        button:hover { background: #2a7de0; }
+        .result-box {
+            margin-top: 28px;
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .result-phishing {
+            background: rgba(220, 50, 50, 0.15);
+            border: 1px solid #dc3232;
+        }
+        .result-legitimate {
+            background: rgba(40, 200, 100, 0.12);
+            border: 1px solid #28c864;
+        }
+        .result-label {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .phishing-label { color: #ff5555; }
+        .legitimate-label { color: #28c864; }
+        .result-confidence {
+            font-size: 14px;
+            color: #8899bb;
+        }
+        .result-icon { font-size: 48px; margin-bottom: 10px; }
+        .footer {
+            margin-top: 28px;
+            text-align: center;
+            font-size: 12px;
+            color: #4a5a7a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Phishing Email Detector</h1>
+            <p>Hubei University of Technology &nbsp;|&nbsp; Khatouri Zayd | 2211551214</p>
+        </div>
+
+        {% if error %}
+        <div style="background: rgba(220, 50, 50, 0.15); border: 1px solid #dc3232; border-radius: 10px; padding: 16px; margin-bottom: 16px; color: #ff5555;">
+            ❌ {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST">
+            <label>Paste email content below:</label>
+            <textarea name="email_text" placeholder="Paste the full email text here...">{{ email_text }}</textarea>
+            <button type="submit">Analyse Email</button>
+        </form>
+
+        {% if result %}
+        <div class="result-box {{ 'result-phishing' if result == 'PHISHING' else 'result-legitimate' }}">
+            <div class="result-icon">{{ '⚠️' if result == 'PHISHING' else '✅' }}</div>
+            <div class="result-label {{ 'phishing-label' if result == 'PHISHING' else 'legitimate-label' }}">
+                {{ '🚨 PHISHING EMAIL DETECTED' if result == 'PHISHING' else '✔ LEGITIMATE EMAIL' }}
+            </div>
+            <div class="result-confidence">
+                Model confidence: {{ confidence }}% &nbsp;|&nbsp; Algorithm: Multinomial Naive Bayes + TF-IDF
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="footer">
+            Phishing Email Detection System &nbsp;·&nbsp; TF-IDF + Naive Bayes &nbsp;·&nbsp; Accuracy: 95.9%
+        </div>
+    </div>
+</body>
+</html>
