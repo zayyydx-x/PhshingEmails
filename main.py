@@ -1,4 +1,3 @@
-import re
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -10,6 +9,7 @@ from sklearn.metrics import (
     classification_report, confusion_matrix
 )
 import pickle, os
+from utils import preprocess
 
 print("=" * 60)
 print("  PHISHING EMAIL DETECTION SYSTEM")
@@ -22,13 +22,6 @@ data = data[['Email Text', 'Email Type']].dropna()
 print(f"\n[1] Dataset: {len(data)} emails | Phishing: {(data['Email Type']=='Phishing Email').sum()} | Safe: {(data['Email Type']=='Safe Email').sum()}")
 
 # STEP 2: PREPROCESS
-def preprocess(text):
-    text = str(text).lower()
-    text = re.sub(r'<[^>]+>', ' ', text)
-    text = re.sub(r'[^a-z\s]', ' ', text)
-    text = re.sub(r'\s+', ' ', text).strip()
-    return text
-
 data['clean_text'] = data['Email Text'].apply(preprocess)
 data['label'] = data['Email Type'].map({'Phishing Email': 1, 'Safe Email': 0})
 print("[2] Preprocessing done")
@@ -79,9 +72,8 @@ print(f"\n{'='*60}\n  MODEL COMPARISON\n{'='*60}")
 print(f"  {'Metric':<12} {'Naive Bayes':>14} {'Logistic Reg':>14}")
 print(f"  {'-'*40}")
 for metric, fn in [('Accuracy',accuracy_score),('Precision',precision_score),('Recall',recall_score),('F1-Score',f1_score)]:
-    args = {} if metric=='Accuracy' else {}
-    nb_s = fn(y_test, nb_pred) if metric=='Accuracy' else fn(y_test, nb_pred)
-    lr_s = fn(y_test, lr_pred) if metric=='Accuracy' else fn(y_test, lr_pred)
+    nb_s = fn(y_test, nb_pred)
+    lr_s = fn(y_test, lr_pred)
     print(f"  {metric:<12} {nb_s:>14.4f} {lr_s:>14.4f}")
 
 # STEP 9: SAVE MODELS

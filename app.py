@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
-import pickle, re, os
+import pickle, os
+from utils import preprocess
 
 app = Flask(__name__, template_folder='Templates')
 
@@ -15,13 +16,6 @@ try:
 except FileNotFoundError:
     print("WARNING: Model files not found. Please run main.py first to train the model.")
 
-def preprocess(text):
-    text = str(text).lower()
-    text = re.sub(r'<[^>]+>', ' ', text)
-    text = re.sub(r'[^a-z\s]', ' ', text)
-    text = re.sub(r'\s+', ' ', text).strip()
-    return text
-
 @app.route('/', methods=['GET', 'POST'])
 def index():
     result = None
@@ -34,7 +28,9 @@ def index():
             error = "Model not loaded. Please ensure model files exist in model/ folder."
         else:
             email_text = request.form.get('email_text', '').strip()
-            if email_text:
+            if not email_text:
+                error = "Please enter some email text to analyze."
+            else:
                 cleaned = preprocess(email_text)
                 features = vectorizer.transform([cleaned])
                 prediction = model.predict(features)[0]
